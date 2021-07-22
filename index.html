@@ -37,6 +37,8 @@
                     </button>
                     <div class="dropdown-menu p-2 dropdown-menu-right" aria-labelledby="dropdownMenuSettings">
                         
+
+                        
                         
                         <fieldset class="form-group">
                             <div class="row">
@@ -139,6 +141,34 @@
                                 <input type="text" class="form-control" id="inputText" placeholder="Text" required>
                             </div>
                         </div>
+
+                        <fieldset class="form-group">
+                            <div class="row">
+                                <legend class="col-form-label col-sm-2 pt-0">Priority</legend>
+                                <div class="col-sm-10">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="gridRadios" id="Low" value="Low" required checked>
+                                        <label class="form-check-label" for="Low">
+                                            Low
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="gridRadios" id="Medium" value="Medium">
+                                        <label class="form-check-label" for="Medium">
+                                            Medium
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="gridRadios" id="High" value="High">
+                                        <label class="form-check-label" for="High">
+                                            High
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+
+
                         <fieldset class="form-group">
                             <div class="row">
                                 <legend class="col-form-label col-sm-2 pt-0">Color</legend>
@@ -166,7 +196,7 @@
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" name="checkColor" id="Stand"
-                                            value="Stand">
+                                            value="Stand" checked>
                                         <label class="form-check-label" for="Stand">
                                             Standart
                                         </label>
@@ -178,6 +208,7 @@
                             <div class="col-sm-12 text-center">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                 <button type="submit" class="btn btn-primary" id="addTaskButton">Add task</button>
+                                <button type="submit" class="btn btn-primary d-none" id="editTaskButton" onclick="editData()">Edit task</button>
                             </div>
                         </div>
                     </form>
@@ -185,79 +216,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Modal 1-->
-    <div class="modal fade" id="exampleModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel1">Edit task</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id='form1'>
-                        <div class="form-group row">
-                            <label for="inputTitle" class="col-sm-2 col-form-label">Title</label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control" id="editTitle" placeholder="Title" >
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="inputText" class="col-sm-2 col-form-label">Text</label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control" id="editText" placeholder="Text" >
-                            </div>
-                        </div>
-                        <fieldset class="form-group" name="Priority">
-                            <div class="row">
-                                <legend class="col-form-label col-sm-2 pt-0">Color</legend>
-                                <div class="col-sm-10">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="checkColor1" id="Red1"
-                                            value="Red1">
-                                        <label class="form-check-label bg-danger text-white" for="Red1">
-                                            Red
-                                        </label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="checkColor1" id="Green1"
-                                            value="Green1">
-                                        <label class="form-check-label bg-success text-white" for="Green1">
-                                            Green
-                                        </label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="checkColor1" id="Blue1"
-                                            value="Blue1">
-                                        <label class="form-check-label bg-primary text-white" for="Blue1">
-                                            Blue
-                                        </label>
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="checkColor1" id="Stand1"
-                                            value="Stand1">
-                                        <label class="form-check-label" for="Stand1">
-                                            Standart
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </fieldset>
-                        <div class="form-group row">
-                            <div class="col-sm-12 text-center">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary" id="editTaskButton" onclick="editData()">Edit task</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"

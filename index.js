@@ -7,61 +7,100 @@ const completedTasksLog = document.querySelector('#completedTasksLog')
 const completeTaskBtn = document.querySelector('.btn-success')
 const deleteTaskBtn = document.querySelector('.btn-danger')
 
-const editTitle = document.querySelector('#editTitle')
-const editText = document.querySelector('#editText')
-const editTaskBtn = document.querySelector('#editTaskButton')
+// const editTitle = document.querySelector('#editTitle')
+// const editText = document.querySelector('#editText')
 const sort1 = document.querySelector('#sort1')
 const sort2 = document.querySelector('#sort2')
 const toDo = document.querySelector('#todo')
 
 const background = document.querySelector('#background')
 
+const form = document.querySelector('#form')
+
+const modalTitle = document.querySelector('#exampleModalLabel')
+const editTaskBtn = document.querySelector('#editTaskButton')
+
 
 
 let bgTaskColor = () => {
-    if (document.querySelector('#Red').checked || document.querySelector('#Red1').checked) {
+    if (document.querySelector('#Red').checked) {
         return 'bg-danger text-white';
     }
-    else if (document.querySelector('#Green').checked || document.querySelector('#Green1').checked) {
+    else if (document.querySelector('#Green').checked) {
         return 'bg-success text-white';
     }
-    else if (document.querySelector('#Blue').checked || document.querySelector('#Blue1').checked) {
+    else if (document.querySelector('#Blue').checked) {
         return 'bg-primary text-white';
     }
-    else if (document.querySelector('#Stand').checked || document.querySelector('#Stand1').checked) {
+    else if (document.querySelector('#Stand').checked) {
         return 'bg-white text-dark';
     } else
         return 'bg-white text-dark';
 }
 
 
+let priority = () => {
+    if (document.querySelector('#Low').checked) {
+        return 'Low';
+    }
+    else if (document.querySelector('#Medium').checked) {
+        return 'Medium';
+    }
+    else if (document.querySelector('#High').checked) {
+        return 'High';
+    }
+}
+
+
 let bgColor = () => {
-    if (document.querySelector('#bgWhite').checked ) {
+    if (document.querySelector('#bgWhite').checked) {
         background.className = 'container-fluid wrapper bg-white';
-        return ;
+        return;
     }
     else if (document.querySelector('#bgSea').checked) {
         background.className = 'container-fluid wrapper bg-info';
-        return ;
+        return;
     }
-    else if (document.querySelector('#bgGray').checked ) {
+    else if (document.querySelector('#bgGray').checked) {
         background.className = 'container-fluid wrapper bg-secondary';
     }
-     else
-     background.className = 'container-fluid wrapper bg-white';
+    else
+        background.className = 'container-fluid wrapper bg-white';
 }
 
-const bgSea  = document.querySelector('#bgSea').onclick = bgColor;
-const bgGray  = document.querySelector('#bgGray').onclick = bgColor;
-const bgWhite  = document.querySelector('#bgWhite').onclick = bgColor;
+const bgSea = document.querySelector('#bgSea').onclick = bgColor;
+const bgGray = document.querySelector('#bgGray').onclick = bgColor;
+const bgWhite = document.querySelector('#bgWhite').onclick = bgColor;
 
+let priorityPosition = str => {
+    switch (str) {
+        case 'Low':
+            return 0;
+        case 'Medium':
+            return 1;
+        case 'High':
+            return 2;
+    }
+}
 
+let colorPosition = str => {
+    switch (str) {
+        case 'bg-danger text-white': //Red
+            return 0;
+        case 'bg-success text-white': //Green
+            return 1;
+        case 'bg-primary text-white':  //Blue
+            return 2;
+        case 'bg-white text-dark':  //Stand
+            return 3;
+    }
+}
 
 
 let tasks;
-!localStorage.tasks ? tasks = [] : tasks = JSON.parse(localStorage.getItem('tasks'));
+tasks = localStorage.getItem('tasks') ? JSON.parse(localStorage.getItem('tasks')) : [];
 
-function Task(titleTask, descriprion, color) {
+function Task(titleTask, descriprion, color, priority) {
     this.name = titleTask;
     this.descriprion = descriprion;
     this.completed = false;
@@ -75,6 +114,10 @@ function Task(titleTask, descriprion, color) {
     this.date = new Date();
     this.dateFormatted = formatter.format(this.date);
     this.bgColor = color;
+    this.colorPosition = colorPosition(color);
+    this.priority = priority;
+    this.priorityPosition = priorityPosition(priority);
+    
 }
 
 const createTemplate = (task, index) => {
@@ -84,6 +127,7 @@ const createTemplate = (task, index) => {
             <div class="d-flex w-100 justify-content-between">
                 <h5 class="mb-1">${task.name}</h5>
                 <div>
+                    <small class="mr-2">${task.priority} priority</small>
                     <small>Create date: ${task.dateFormatted}</small>
                 </div>
 
@@ -96,7 +140,7 @@ const createTemplate = (task, index) => {
             </button>
             <div class="dropdown-menu p-2 flex-column" aria-labelledby="dropdownMenuItem1">
                 <button onclick="completeTask(${index})" type="button" class="btn btn-success w-100">Complete</button>
-                <button data-toggle="modal" data-target="#exampleModal1" type="button" onclick="editTask(${index})"  class="btn btn-info w-100 my-2">Edit</button>
+                <button data-toggle="modal" data-target="#exampleModal" type="button" onclick="editTask(${index})"  class="btn btn-info w-100 my-2">Edit</button>
                 <button onclick="deleteTask(${index})" type="button" class="btn btn-danger w-100">Delete</button>
             </div>
         </div>
@@ -111,6 +155,7 @@ const createTemplateDone = (task, index) => {
             <div class="d-flex w-100 justify-content-between">
                 <h5 class="mb-1">${task.name}</h5>
                 <div>
+                    <small class="mr-2">${task.priority} priority</small>
                     <small>${task.dateFormatted}</small>
                 </div>
 
@@ -129,7 +174,7 @@ const createTemplateDone = (task, index) => {
     </li>`
 }
 
-function fillHtmlList()  {
+function fillHtmlList() {
     currentTasks.innerHTML = '';
     completedTasks.innerHTML = '';
     if (tasks.length > 0) {
@@ -140,8 +185,8 @@ function fillHtmlList()  {
                 currentTasks.innerHTML += createTemplate(item, index);
         })
     }
-    toDo.innerHTML = `ToDo(${((document.getElementById('currentTasks').childNodes.length)/2)})`;
-    completedTasksLog.innerHTML = `Comleted(${((document.getElementById('completedTasks').childNodes.length)/2)})`;
+    toDo.innerHTML = `ToDo(${((document.getElementById('currentTasks').childNodes.length) / 2)})`;
+    completedTasksLog.innerHTML = `Comleted(${((document.getElementById('completedTasks').childNodes.length) / 2)})`;
 }
 
 fillHtmlList();
@@ -157,18 +202,30 @@ const completeTask = (index) => {
 }
 
 const editTask = (index) => {
+    modalTitle.innerHTML = "Edit task";
+    addTaskBtn.className = 'd-none';
+    editTaskBtn.className = 'btn btn-primary';
+    titleNewTask.value = tasks[index].name;
+    textNewTask.value = tasks[index].descriprion;
+    form.gridRadios[tasks[index].priorityPosition].checked = true;
+    form.checkColor[tasks[index].colorPosition].checked = true;
 
-    editTitle.value = tasks[index].name;
-    editText.value = tasks[index].descriprion;
 
     editData = () => {
-        tasks[index].name = editTitle.value;
-        tasks[index].descriprion = editText.value;
-        tasks[index].bgColor = bgTaskColor();
-        updateLocal();
-        fillHtmlList();
+        if (titleNewTask.value && textNewTask.value) {
+            tasks[index].name = titleNewTask.value;
+            tasks[index].descriprion = textNewTask.value;
+            tasks[index].bgColor = bgTaskColor();
+            tasks[index].priority = priority();
+            tasks[index].priorityPosition = priorityPosition(tasks[index].priority);
+            //tasks[index].colorPosition = colorPosition(tasks[index].bgColor);
+            updateLocal();
+            fillHtmlList();
+        }
     };
 }
+
+
 
 const deleteTask = (index) => {
     tasks.splice(index, 1);
@@ -177,9 +234,11 @@ const deleteTask = (index) => {
 }
 
 addTaskBtn.addEventListener('click', () => {
-    tasks.push(new Task(titleNewTask.value, textNewTask.value, bgTaskColor()));
-    updateLocal();
-    fillHtmlList();
+    if (titleNewTask.value && textNewTask.value) {
+        tasks.push(new Task(titleNewTask.value, textNewTask.value, bgTaskColor(), priority()));
+        updateLocal();
+        fillHtmlList();
+    }
 });
 
 sort1.addEventListener('click', () => {
