@@ -72,7 +72,8 @@ function Task(titleTask, descriprion, color) {
         month: "long",
         year: "numeric",
     });
-    this.date = formatter.format(new Date());
+    this.date = new Date();
+    this.dateFormatted = formatter.format(this.date);
     this.bgColor = color;
 }
 
@@ -83,7 +84,7 @@ const createTemplate = (task, index) => {
             <div class="d-flex w-100 justify-content-between">
                 <h5 class="mb-1">${task.name}</h5>
                 <div>
-                    <small>Create date: ${task.date}</small>
+                    <small>Create date: ${task.dateFormatted}</small>
                 </div>
 
             </div>
@@ -110,7 +111,7 @@ const createTemplateDone = (task, index) => {
             <div class="d-flex w-100 justify-content-between">
                 <h5 class="mb-1">${task.name}</h5>
                 <div>
-                    <small>${task.date}</small>
+                    <small>${task.dateFormatted}</small>
                 </div>
 
             </div>
@@ -177,7 +178,6 @@ const deleteTask = (index) => {
 
 addTaskBtn.addEventListener('click', () => {
     tasks.push(new Task(titleNewTask.value, textNewTask.value, bgTaskColor()));
-    console.log(tasks);
     updateLocal();
     fillHtmlList();
 });
