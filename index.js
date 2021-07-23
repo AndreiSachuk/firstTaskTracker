@@ -7,8 +7,6 @@ const completedTasksLog = document.querySelector('#completedTasksLog')
 const completeTaskBtn = document.querySelector('.btn-success')
 const deleteTaskBtn = document.querySelector('.btn-danger')
 
-// const editTitle = document.querySelector('#editTitle')
-// const editText = document.querySelector('#editText')
 const sort1 = document.querySelector('#sort1')
 const sort2 = document.querySelector('#sort2')
 const toDo = document.querySelector('#todo')
@@ -20,6 +18,9 @@ const form = document.querySelector('#form')
 const modalTitle = document.querySelector('#exampleModalLabel')
 const editTaskBtn = document.querySelector('#editTaskButton')
 
+
+const colorsList = document.querySelectorAll("[name=checkColor");
+const positionList = document.querySelectorAll("[name=gridRadios")
 
 
 let bgTaskColor = () => {
@@ -72,31 +73,6 @@ const bgSea = document.querySelector('#bgSea').onclick = bgColor;
 const bgGray = document.querySelector('#bgGray').onclick = bgColor;
 const bgWhite = document.querySelector('#bgWhite').onclick = bgColor;
 
-let priorityPosition = str => {
-    switch (str) {
-        case 'Low':
-            return 0;
-        case 'Medium':
-            return 1;
-        case 'High':
-            return 2;
-    }
-}
-
-let colorPosition = str => {
-    switch (str) {
-        case 'bg-danger text-white': //Red
-            return 0;
-        case 'bg-success text-white': //Green
-            return 1;
-        case 'bg-primary text-white':  //Blue
-            return 2;
-        case 'bg-white text-dark':  //Stand
-            return 3;
-    }
-}
-
-
 let tasks;
 tasks = localStorage.getItem('tasks') ? JSON.parse(localStorage.getItem('tasks')) : [];
 
@@ -114,10 +90,26 @@ function Task(titleTask, descriprion, color, priority) {
     this.date = new Date();
     this.dateFormatted = formatter.format(this.date);
     this.bgColor = color;
-    this.colorPosition = colorPosition(color);
+    this.colorPosition = colorPosition();
     this.priority = priority;
-    this.priorityPosition = priorityPosition(priority);
-    
+    this.priorityPosition = priorityPosition();
+
+}
+
+let colorPosition = () => {
+    for (let index = 0; index < colorsList.length; index++) {
+        if (colorsList[index].checked) {
+            return index;
+        }
+    }
+};
+
+let priorityPosition = () => {
+    for (let index = 0; index < positionList.length; index++) {
+        if (positionList[index].checked) {
+            return index;
+        }
+    }
 }
 
 const createTemplate = (task, index) => {
@@ -209,22 +201,17 @@ const editTask = (index) => {
     textNewTask.value = tasks[index].descriprion;
     form.gridRadios[tasks[index].priorityPosition].checked = true;
     form.checkColor[tasks[index].colorPosition].checked = true;
-
-
     editData = () => {
-        if (titleNewTask.value && textNewTask.value) {
-            tasks[index].name = titleNewTask.value;
-            tasks[index].descriprion = textNewTask.value;
-            tasks[index].bgColor = bgTaskColor();
-            tasks[index].priority = priority();
-            tasks[index].priorityPosition = priorityPosition(tasks[index].priority);
-            //tasks[index].colorPosition = colorPosition(tasks[index].bgColor);
-            updateLocal();
-            fillHtmlList();
-        }
+        tasks[index].name = titleNewTask.value;
+        tasks[index].descriprion = textNewTask.value;
+        tasks[index].bgColor = bgTaskColor();
+        tasks[index].priority = priority();
+        tasks[index].priorityPosition = priorityPosition();
+        tasks[index].colorPosition = colorPosition();
+        updateLocal();
+        fillHtmlList();
     };
 }
-
 
 
 const deleteTask = (index) => {
@@ -233,11 +220,13 @@ const deleteTask = (index) => {
     fillHtmlList();
 }
 
-addTaskBtn.addEventListener('click', () => {
-    if (titleNewTask.value && textNewTask.value) {
+form.addEventListener('submit', (event) => {
+    if (event.submitter.id === "addTaskButton") {
         tasks.push(new Task(titleNewTask.value, textNewTask.value, bgTaskColor(), priority()));
         updateLocal();
         fillHtmlList();
+    } else if (event.submitter.id === "editTaskButton") {
+        editData();
     }
 });
 
@@ -252,8 +241,3 @@ sort2.addEventListener('click', () => {
     updateLocal();
     fillHtmlList();
 });
-
-
-
-
-
